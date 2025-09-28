@@ -31,6 +31,12 @@ class Hero():
             self.camera_up()
         else:
             self.camera_bind()
+
+    def change_mode(self):
+        if self.game_mode:
+            self.game_mode = False
+        else:
+            self.game_mode = True
         
     def turn_left(self):
         self.hero.setH((self.hero.getH() + 5) % 360)
@@ -49,12 +55,20 @@ class Hero():
         """Рух гравця в режимі спостерігача"""
         pos = self.look_at(angle)
         self.hero.setPos(pos)
-        pass
+        
 
     def try_move(self, angle):
         """Рух гравця в основному ігровому режимі"""
-        pass
-
+        pos = self.look_at(angle)
+        if self.look_at(angle):
+            if self.land.is_empty(pos):
+                pos = self.land.find_highest_empty(pos)
+                self.hero.setPos(pos)
+        else:
+            pos = pos[0], pos[1], pos[2] + 1
+            if self.land.is_empty(pos):
+                self.hero.setPos(pos)
+       
     def look_at(self, angle):
         x = round(self.hero.getX())
         y = round(self.hero.getY())
@@ -86,6 +100,22 @@ class Hero():
         
     def down(self):
         self.hero.setZ(self.hero.getZ() - 1)
+
+    def build(self):
+        angle = self.hero.getH() % 360
+        pos = self.look_at(angle)
+        if self.game_mode:
+            self.land.add_block(pos)
+        else:
+            self.land.build_block(pos)
+
+    def destroy(self):
+        angle = self.hero.getH() % 360
+        pos = self.look_at(angle)
+        if self.game_mode:
+            self.land.destroy_block(pos)
+        else:
+            self.land.del_block_from(pos)
 
     def check_dir(self, angle):
        ''' повертає заокруглені зміни координат X, Y,
@@ -136,3 +166,8 @@ class Hero():
         base.accept("s", self.back)
         base.accept("q", self.up)
         base.accept("z", self.down)
+        base.accept("e", self.change_mode)
+        base.accept("b", self.build)
+        base.accept("v", self.destroy)
+        base.accept("l", self.land.load_map_from_file)
+        base.accept("k", self.land.save_map)
