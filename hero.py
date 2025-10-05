@@ -9,6 +9,10 @@ class Hero():
         self.hero.setPos(position)
         self.hero.reparentTo(render)
 
+        self.damage_snd = base.loader.loadSfx("sounds/inecraft_damage.ogg")
+        self.build_snd = base.loader.loadSfx("sounds/build.ogg")
+        self.up_snd = base.loader.loadSfx("sounds/up.mp3")
+
         self.camera_bind()
         self.accept_events()
 
@@ -46,7 +50,7 @@ class Hero():
 
     def move_to(self, angle):
         """Обираємо як рухати гравця в залежності від режиму гри"""
-        if self.game_mode == True:
+        if self.game_mode:
             self.just_move(angle)
         else:
             self.try_move(angle)
@@ -54,20 +58,23 @@ class Hero():
     def just_move(self, angle):
         """Рух гравця в режимі спостерігача"""
         pos = self.look_at(angle)
+        print(pos)
         self.hero.setPos(pos)
         
 
     def try_move(self, angle):
         """Рух гравця в основному ігровому режимі"""
         pos = self.look_at(angle)
-        if self.look_at(angle):
-            if self.land.is_empty(pos):
-                pos = self.land.find_highest_empty(pos)
-                self.hero.setPos(pos)
+        print(pos)
+        if self.land.is_empty(pos):
+            pos = self.land.find_highest_empty(pos)
+            self.hero.setPos(pos)
         else:
             pos = pos[0], pos[1], pos[2] + 1
             if self.land.is_empty(pos):
                 self.hero.setPos(pos)
+                self.up_snd.play()
+            
        
     def look_at(self, angle):
         x = round(self.hero.getX())
@@ -108,6 +115,7 @@ class Hero():
             self.land.add_block(pos)
         else:
             self.land.build_block(pos)
+        self.build_snd.play()
 
     def destroy(self):
         angle = self.hero.getH() % 360

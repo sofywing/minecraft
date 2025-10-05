@@ -3,7 +3,7 @@ import pickle
 class MapManager:
     def __init__(self): 
         self.model = "models/block.egg"
-        self.texture = "textures/block.png"
+        self.texture = "ельпрімо.png"
         self.colors = [
             (245/100, 39/100, 39/100, 0.8/100),
             (39/100, 245/100, 50/100, 0.86/100),
@@ -58,7 +58,7 @@ class MapManager:
             return True
         
     def find_highest_empty(self, pos):  # (10, 12, 1)
-        x, y, x = pos
+        x, y, z = pos
         z = 1
         while not self.is_empty((x, y, z)):
             z += 1
@@ -97,7 +97,7 @@ class MapManager:
             for i in range(lenght):
                 pos = pickle.load(file)
                 self.add_block(pos)
-                v
+                
 
 
 
